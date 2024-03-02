@@ -1,0 +1,1 @@
+bikram@alina:/alina-data2/Bikram/Germline_variant_tusse_1_2k/hapcut2_and_beagle_merge/Beagle_processing$ nohup java -Xmx4g -jar /alina-data2/Bikram/Germline_variant_tusse_1_2k/Beagle5.4/beagle.22Jul22.46e.jar gt=file.vcf.gz out=file_output map="/alina-data2/Bikram/Germline_variant_tusse_1_2k/hapcut2_and_beagle_merge/Beagle_processing/1000G/plink.chr1.GRCh38.map" impute=true

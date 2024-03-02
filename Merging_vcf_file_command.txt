@@ -1,0 +1,3 @@
+bgzip input.vcf
+bcftools index input.vcf.gz
+bcftools merge --force-samples file*.vcf.gz -Oz -o Bikram_M_.vcf.gz

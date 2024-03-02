@@ -1,0 +1,5 @@
+#removal of extra space from a file 
+awk -F'\t' 'BEGIN {OFS="\t"} { for (i=1; i<=NF; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i); print }' new_1000G_sample.txt > new_1000G_sample_1.txt
+
+#key generation command
+awk -F'\t' 'BEGIN {OFS="\t"} {print $1 "_" $2 "_" $4 "_" $5, $0}' new_1000G_sample_1.txt > new_1000G_sample_2.txt

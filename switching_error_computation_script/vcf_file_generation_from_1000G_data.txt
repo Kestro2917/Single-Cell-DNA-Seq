@@ -1,0 +1,6 @@
+#collection of first 10 columns
+cut -f 1-10 new_1000G_sample.txt > new_1000G_sample_1.txt
+
+#add the term "chr" to the first column
+awk '{OFS="\t"; $1 = "chr" $1; print}' new_1000G_sample_1.txt > new_1000G_sample_2.txt
+

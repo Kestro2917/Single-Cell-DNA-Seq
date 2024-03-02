@@ -1,0 +1,33 @@
+bwa mem -K 100000000 -Y -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1' "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/chr1_index/chr1.fa" merged_read1.fastq.gz merged_read2.fastq.gz > aligned_reads_new.sam 
+
+java -Xmx20G -jar picard.jar SamFormatConverter I=aligned_reads.sam O=aligned_reads.bam VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar SortSam I=aligned_reads.bam o=aligned_reads_sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar MarkDuplicates  I= aligned_reads_sorted.bam o= aligned_reads_sorted_DupRm.bam METRICS_FILE= dumy_sorted_DupRm_info.txt REMOVE_DUPLICATES=true ASSUME_SORTED=true VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar BuildBamIndex I= aligned_reads_sorted_DupRm.bam o= aligned_reads_sorted_DupRm.bai VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar HaplotypeCaller -R /alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/chr1_index/chr1.fa -I aligned_reads_sorted_DupRm.bam -O aligned_reads_sorted_DupRm_raw_variants.vcf
+
+samtools faidx chr1.fa /// to create .fa.fai file for .fa
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar CreateSequenceDictionary -R chr1.fa // to create a .dict file from .fa file
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar SelectVariants -R /alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/chr1_index/chr1.fa -V aligned_reads_sorted_DupRm_raw_variants.vcf --select-type-to-include SNP -O aligned_reads_sorted_DupRm_raw_snps.vcf
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar VariantFiltration -R /alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/chr1_index/chr1.fa -V aligned_reads_sorted_DupRm_raw_snps.vcf -O aligned_reads_sorted_DupRm_raw_filtered_snps.vcf -filter-name "QD_filter" -filter "QD < 2.0" -filter-name "FS_filter" -filter "FS > 60.0" -filter-name "MQ_filter" -filter "MQ < 40.0" -filter-name "SOR_filter" -filter "SOR > 4.0" -filter-name "MQRankSum_filter" -filter "MQRankSum < -12.5" -filter-name "ReadPosRankSum_filter" -filter "ReadPosRankSum < -8.0"
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar SelectVariants --exclude-filtered -V aligned_reads_sorted_DupRm_raw_filtered_snps.vcf -O aligned_reads_sorted_DupRm_raw_filtered_DupRm_bqsr_snps.vcf
+
+./extractHAIRS --bam "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/variant_of_simulated_data/aligned_reads_sorted_DupRm.bam" --vcf "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/variant_of_simulated_data/aligned_reads_sorted_DupRm_raw_filtered_DupRm_bqsr_snps.vcf" --out /alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/variant_of_simulated_data/aligned_reads_sorted_DupRm_fragment_file
+
+./HAPCUT2 --fragments "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/variant_of_simulated_data/aligned_reads_sorted_DupRm_fragment_file" --VCF "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/variant_of_simulated_data/aligned_reads_sorted_DupRm_raw_filtered_DupRm_bqsr_snps.vcf" --output /alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/variant_of_simulated_data/aligned_reads_sorted_DupRm_haplotype_output_file
+
+java -Xmx4g -jar "/alina-data2/Bikram/Germline_variant_tusse_1_2k/hapcut2_and_beagle_merge/Beagle_processing/beagle.22Jul22.46e.jar" gt=file_samson_1.vcf.gz out=file_beagle_final_output map="/alina-data2/Bikram/Germline_variant_tusse_1_2k/hapcut2_and_beagle_merge/Beagle_processing/1000G_37/plink.chr1.GRCh37.map" impute=true
+
+######
+bwa mem -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1' "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/chr1_index/chr1.fa" merged_read1.fastq.gz merged_read2.fastq.gz > aligned_reads_1.sam
+
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar SamFormatConverter I=aligned_reads.sam O=aligned_reads.bam VALIDATION_STRINGENCY=SILENT

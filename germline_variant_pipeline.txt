@@ -1,0 +1,47 @@
+https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/
+
+#java -jar picard.jar FixMateInformation I=input.bam O=fixed_mate.bam ADD_MATE_CIGAR=true
+
+java -Xmx20G -jar picard.jar SamFormatConverter I=dumy.sam O=dumy_fxd.bam VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar SortSam I=dumy_fxd.bam o=dumy_sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar MarkDuplicates  I= dumy_sorted.bam o= dumy_sorted_DupRm.bam METRICS_FILE= dumy_sorted_DupRm_info.txt REMOVE_DUPLICATES=true ASSUME_SORTED=true VALIDATION_STRINGENCY=SILENT
+
+java -Xmx20G -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar BuildBamIndex I= dumy_sorted_DupRm.bam o= dumy_sorted_DupRm.bai VALIDATION_STRINGENCY=SILENT
+
+#java -Xmx20G -jar picard.jar CollectAlignmentSummaryMetrics R=/alina-data1/Bikram/hg19/hg19_ref_genome.fa I=dumy_sorted_DupRm.bam O=alignment_metrics.txt
+
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0 -T RealignerTargetCreator -R /alina-data1/Bikram/hg19/hg19_ref_genome.fa -I dumy_fxd_sorted_DupRm.bam -o dumy_fxd_sorted_DupRm_IndelRealigner.intervals
+
+
+java -Xmx20G -jar /opt/ngs_softwares/GenomeAnalysisTK-2.5-2-gf57256b/GenomeAnalysisTK.jar -T IndelRealigner -R /media/LUN4/pawan/exome/references/hg19_all.fasta -I ./output/14T_fxd_sorted_DupRm.bam -targetIntervals ./output/14T_fxd_sorted_DupRm_IndelRealigner.intervals -o ./output/14T_fxd_sorted_DupRm_realn.bam -log ./output/14T_fxd_sorted_DupRm_realn.bam.log
+
+
+
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0 HaplotypeCaller -R /alina-data1/Bikram/hg19/hg19_ref_genome.fa -I dumy_sorted_DupRm.bam -o raw_variants.vcf
+
+
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X, Y, MT, GL000207.1, GL000226.1, GL000229.1, GL000231.1, GL000210.1, GL000239.1, GL000235.1, GL000201.1, GL000247.1, GL000245.1, GL000197.1, GL000203.1, GL000246.1, GL000249.1, GL000196.1, GL000248.1, GL000244.1, GL000238.1, GL000202.1, GL000234.1, GL000232.1, GL000206.1, GL000240.1, GL000236.1, GL000241.1, GL000243.1, GL000242.1, GL000230.1, GL000237.1, GL000233.1, GL000204.1, GL000198.1, GL000208.1, GL000191.1, GL000227.1, GL000228.1, GL000214.1, GL000221.1, GL000209.1, GL000218.1, GL000220.1, GL000213.1, GL000211.1, GL000199.1, GL000217.1, GL000216.1, GL000215.1, GL000205.1, GL000219.1, GL000224.1, GL000223.1, GL000195.1, GL000212.1, GL000222.1, GL000200.1, GL000193.1, GL000194.1, GL000225.1, GL000192.1, NC_007605, hs37d5
+
+cat 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X Y MT GL000207.1 GL000226.1 GL000229.1 GL000231.1 GL000210.1 GL000239.1 GL000235.1 GL000201.1 GL000247.1 GL000245.1 GL000197.1 GL000203.1 GL000246.1 GL000249.1 GL000196.1 GL000248.1 GL000244.1 GL000238.1 GL000202.1 GL000234.1 GL000232.1 GL000206.1 GL000240.1 GL000236.1 GL000241.1 GL000243.1 GL000242.1 GL000230.1 GL000237.1 GL000233.1 GL000204.1 GL000198.1 GL000208.1 GL000191.1 GL000227.1 GL000228.1 GL000214.1 GL000221.1 GL000209.1 GL000218.1 GL000220.1 GL000213.1 GL000211.1 GL000199.1 GL000217.1 GL000216.1 GL000215.1 GL000205.1 GL000219.1 GL000224.1 GL000223.1 GL000195.1 GL000212.1 GL000222.1 GL000200.1 GL000193.1 GL000194.1 GL000225.1 GL000192.1 NC_007605 hs37d5 >> hg19_ref_genome.fa
+
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar VariantFiltration -R /alina-data1/Bikram/human_g1k_v37/human_g1k_v37.fasta -V breast_tissue_A_2k_possorted_bam_sorted_DupRm_raw_snps.vcf -O breast_tissue_A_2k_possorted_bam_sorted_DupRm_raw_filtered_snps.vcf -filter-name "QD_filter" -filter "QD < 2.0" -filter-name "FS_filter" -filter "FS > 60.0" -filter-name "MQ_filter" -filter "MQ < 40.0" -filter-name "SOR_filter" -filter "SOR > 4.0" -filter-name "MQRankSum_filter" -filter "MQRankSum < -12.5" -filter-name "ReadPosRankSum_filter" -filter "ReadPosRankSum < -8.0"
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar SelectVariants --exclude-filtered -V breast_tissue_A_2k_possorted_bam_sorted_DupRm_raw_filtered_snps.vcf -O breast_tissue_A_2k_possorted_bam_sorted_DupRm_bqsr_snps.vcf
+
+
+java -Xmx20G -jar /alina-data2/Bikram/gatk-4.3.0.0/gatk-package-4.3.0.0-local.jar BaseRecalibrator -R /alina-data1/Bikram/human_g1k_v37/human_g1k_v37.fasta -I breast_tissue_A_2k_possorted_bam_sorted_DupRm.bam --known-sites breast_tissue_A_2k_possorted_bam_sorted_DupRm_bqsr_snps.vcf -O breast_tissue_A_2k_possorted_bam_sorted_DupRm_recal_data.table 
+
+
+./build/extractHAIRS --mbq 5 --bam "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted.bam" --vcf "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm_raw_variants.vcf" --out /alina-data2/Bikram/Germline_variant_tusse_1_2k/fragment_file
+
+./build/HAPCUT2 --fragments "/alina-data2/Bikram/Germline_variant_tusse_1_2k/fragment_file" --VCF "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm_raw_variants.vcf" --output /alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_output_file
+
+
+###################################33new commands (HAPCUT2):
+
+./build/extractHAIRS --bam "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm.bam" --vcf "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm_bqsr_snps.vcf" --out "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_fragment_file"

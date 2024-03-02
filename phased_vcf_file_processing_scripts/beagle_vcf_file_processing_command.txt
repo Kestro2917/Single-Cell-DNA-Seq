@@ -1,0 +1,21 @@
+#unzip the beagle vcf file
+gzip -d file_beagle_output.vcf.gz
+
+#remove lines that starts with #
+sed -i '/^#/d' beagle_out.vcf
+
+#selection of top columns
+cut -f1-10 beagle_out.vcf > beagle_data.txt
+
+#remove extra space from the columns 
+awk -F'\t' 'BEGIN {OFS="\t"} { for (i=1; i<=NF; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i); print }' beagle_data.txt > beagle_data_1.txt
+
+#key generation columns
+awk -F'\t' 'BEGIN {OFS="\t"} {print $1 "_" $2 "_" $4 "_" $5, $0}' beagle_data_1.txt > beagle_data_2.txt
+
+
+
+
+
+
+

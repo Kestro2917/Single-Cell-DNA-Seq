@@ -1,0 +1,18 @@
+#remove lines that starts with #
+sed -i '/^#/d' aligned_reads_sorted_DupRm_raw_filtered_DupRm_bqsr_snps.vcf
+
+#extraction of the important columns from a file
+cut -f1,2,4,5,9,10 aligned_reads_sorted_DupRm_raw_filtered_DupRm_bqsr_snps.vcf > vcf_file.txt
+
+#cleaning the file by only keeping "GT" in the 5th column
+awk 'BEGIN{FS=OFS="\t"} {split($5, a, ":"); $5 = a[1]; print}' vcf_file.txt > vcf_file_1.txt
+
+#cleaning the file by only keeping "GT" in the 5th column
+awk 'BEGIN{FS=OFS="\t"} {split($6, a, ":"); $6 = a[1]; print}' vcf_file_1.txt > vcf_file_2.txt
+
+#key generation
+awk -F'\t' 'BEGIN {OFS="\t"} {print $1 "_" $2 "_" $3 "_" $4, $0}' vcf_file_2.txt > vcf_file_3.txt
+
+#removal of "chr" from column 1
+sed 's/^chr//' vcf_file_3.txt > vcf_file_4.txt
+

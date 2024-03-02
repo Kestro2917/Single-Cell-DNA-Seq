@@ -1,0 +1,61 @@
+mv aligned_reads_sorted_DupRm_raw_filtered_DupRm_bqsr_snps.vcf file.vcf
+cp file.vcf file1.vcf
+cp file.vcf file2.vcf
+cp file.vcf file3.vcf
+cp file.vcf file4.vcf
+cp file.vcf file5.vcf
+cp file.vcf file6.vcf
+cp file.vcf file7.vcf
+cp file.vcf file8.vcf
+cp file.vcf file9.vcf
+cp file.vcf file10.vcf
+cp file.vcf file11.vcf
+cp file.vcf file12.vcf
+cp file.vcf file13.vcf
+cp file.vcf file14.vcf
+cp file.vcf file15.vcf
+cp file.vcf file16.vcf
+cp file.vcf file17.vcf
+cp file.vcf file18.vcf
+cp file.vcf file19.vcf
+cp file.vcf file20.vcf
+
+for file in *.vcf; do bgzip "$file"; done
+
+
+bcftools index file.vcf.gz
+bcftools index file1.vcf.gz
+bcftools index file2.vcf.gz
+bcftools index file3.vcf.gz
+bcftools index file4.vcf.gz
+bcftools index file5.vcf.gz
+bcftools index file6.vcf.gz
+bcftools index file7.vcf.gz
+bcftools index file8.vcf.gz
+bcftools index file9.vcf.gz
+bcftools index file10.vcf.gz
+bcftools index file11.vcf.gz
+bcftools index file12.vcf.gz
+bcftools index file13.vcf.gz
+bcftools index file14.vcf.gz
+bcftools index file15.vcf.gz
+bcftools index file16.vcf.gz
+bcftools index file17.vcf.gz
+bcftools index file18.vcf.gz
+bcftools index file19.vcf.gz
+bcftools index file20.vcf.gz
+
+
+bcftools merge --force-samples file*.vcf.gz -Oz -o file_samson_chr1.vcf.gz
+
+gzip -d file_samson_chr1.vcf.gz
+sed -i 's/^chr//' file_samson_chr1.vcf
+bgzip file_samson_chr1.vcf
+
+java -Xmx4g -jar "/alina-data2/Bikram/Germline_variant_tusse_1_2k/hapcut2_and_beagle_merge/Beagle_processing/beagle.22Jul22.46e.jar" gt=file_samson_chr1.vcf.gz out=file_beagle_output map="/alina-data2/Bikram/Germline_variant_tusse_1_2k/hapcut2_and_beagle_merge/Beagle_processing/1000G_37/plink.chr1.GRCh37.map" impute=true
+
+
+
+
+
+

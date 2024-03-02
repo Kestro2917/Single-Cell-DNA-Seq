@@ -1,0 +1,11 @@
+all data are in the below folder:
+/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/switch_error_computation/try_1
+
+the command to compute the swith error:
+
+whatshap compare --names truth,beagle --tsv-pairwise eval_truthvshapcut2.tsv final_original_phased.vcf final_predicted_phased.vcf
+
+
+
+
+awk -F'\t' 'BEGIN{OFS="\t"} {print $1,$2,$3,$4,$5,$6,$7,$8,$9,$12}' 

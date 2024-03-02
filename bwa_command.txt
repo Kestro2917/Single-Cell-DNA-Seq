@@ -1,0 +1,1 @@
+nohup bwa mem -K 100000000 -Y -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1' "/alina-data2/Bikram/Germline_variant_tusse_1_2k/haplotype_sequence_generator/chr1_index/chr1.fa" merged_read1.fastq.gz merged_read2.fastq.gz > aligned_reads_new_1.sam 2>/dev/null &

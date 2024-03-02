@@ -1,0 +1,4 @@
+cat *.read2.fastq.gz > merged_read2.fastq.gz
+clear
+cat *.read1.fastq.gz > merged_read1.fastq.gz
+clear

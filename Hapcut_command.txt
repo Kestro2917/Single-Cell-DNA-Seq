@@ -1,0 +1,3 @@
+./build/extractHAIRS --bam "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm.bam" --vcf "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm_bqsr_snps.vcf" --out "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_fragment_file"
+
+./build/HAPCUT2 --fragments "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_fragment_file" --VCF "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_bam_sorted_DupRm_bqsr_snps.vcf" --output "/alina-data2/Bikram/Germline_variant_tusse_1_2k/breast_tissue_A_2k_possorted_fragment_haplotype_output_file"

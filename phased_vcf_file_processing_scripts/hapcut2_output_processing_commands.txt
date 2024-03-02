@@ -1,0 +1,23 @@
+#remove the lines that starts with word "BLOCK"
+grep -v '^BLOCK' aligned_read_sorted_DupRm_output_file > hapcut2_file_1
+
+#remove the lines that starts with the symbol "*"
+grep -v '^\*' hapcut2_file_1 > hapcut2_file_2
+
+#removal of extra space from a file 
+awk -F'\t' 'BEGIN {OFS="\t"} { for (i=1; i<=NF; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i); print }' hapcut2_file_2 > hapcut2_file_3
+
+#key generation command
+awk -F'\t' 'BEGIN {OFS="\t"} {print $4 "_" $5 "_" $6 "_" $7, $0}' hapcut2_file_3 > hapcut2_file_4
+
+#column extraction command
+awk -F'\t' '{print $1"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8}' hapcut2_file_4 > hapcut2_file_5
+
+#creating the new phasing column
+awk -F'\t' '{OFS="\t"; $NF = $2 "|" $3; print}' hapcut2_file_5 > hapcut2_file_6
+
+#removing the prefix chr from the first column
+sed 's/^chr//' hapcut2_file_6 > hapcut2_file_7
+
+
+
